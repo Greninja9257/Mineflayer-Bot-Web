@@ -1,0 +1,51 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(120deg, #89f7fe, #66a6ff);
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.map-container {
+    height: 400px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.chat-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    height: 200px;
+    overflow-y: auto;
+    background: #f9f9f9;
+    margin-top: 20px;
+}

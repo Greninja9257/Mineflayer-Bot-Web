@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Web</title>
+    <style>
+        /* Base Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(120deg, #2b5876, #4e4376);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Form Styling */
+        form {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, button {
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+        }
+
+        input {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #ddd;
+        }
+
+        button {
+            background: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        /* Hide scrollbars in modern browsers */
+        .full-screen {
+            overflow: hidden; /* Hides both horizontal and vertical scrollbars */
+        }
+
+        /* Hide scrollbars in WebKit browsers (Chrome, Safari, Edge) */
+        .full-screen::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbars in Firefox */
+        .full-screen {
+            scrollbar-width: none; /* Hides scrollbar in Firefox */
+        }
+
+        /* Prevent scrollbars from appearing, but content can still be scrolled */
+        .full-screen {
+            -ms-overflow-style: none; /* Hides scrollbar in IE 10+ */
+        }
+
+        /* Bot Boxes */
+        .bot-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+
+        .bot-box {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bot-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            will-change: transform, box-shadow; /* Optimizes the hover effect */
+        }
+
+        .bot-info {
+            margin-bottom: 10px;
+        }
+
+        .status-dot {
+            height: 15px;
+            width: 15px;
+            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .status-dot.active {
+            background-color: green;
+        }
+
+        .status-dot.inactive {
+            background-color: red;
+        }
+
+        /* Full-Screen Details */
+        .full-screen {
+            position: fixed;
+            top: 5%;
+            left: 5%;
+            width: 90%;
+            height: 90%;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+            border-radius: 10px;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .close-button {
+            background: #ff4d4d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .close-button:hover {
+            background: #ff1a1a;
+        }
+
+        .map-container {
+            height: 400px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bot Web</h1>
+        <form action="/spawn" method="POST">
+            <input type="text" name="prefix" placeholder="Bot Prefix" required>
+            <input type="text" name="server" placeholder="Server" required>
+            <input type="text" name="version" placeholder="Minecraft Version" required>
+            <input type="number" name="amount" placeholder="Number of Bots" min="1" required>
+            <button type="submit">Spawn Bots</button>
+        </form>
+        <h2>Active Bots</h2>
+        <div id="bot-list" class="bot-list">
+            <!-- Dynamically populated -->
+        </div>
+    </div>
+    <!-- Full-Screen Bot Details -->
+    <div id="bot-details" class="full-screen">
+        <button class="close-button" onclick="closeBotDetails()">Close</button>
+        <h2 id="bot-name"></h2>
+        <p><strong>Server:</strong> <span id="bot-server"></span></p>
+        <p><strong>Version:</strong> <span id="bot-version"></span></p>
+        <div class="map-container" id="map">Map goes here</div>
+        <div class="chat-container" id="chat">Chat messages will appear here</div>
+        <iframe id="bot-viewer" src="" style="width: 100%; height: calc(100% - 200px); border: none; margin-top: 20px;"></iframe>
+    </div>
+
+    <script>
+        async function fetchBots() {
+            const response = await fetch('/api/bots');
+            const bots = await response.json();
+            const botList = document.getElementById('bot-list');
+            botList.innerHTML = '';
+
+            if (Object.keys(bots).length === 0) {
+                botList.innerHTML = '<p>No active bots</p>';
+                return;
+            }
+
+            for (const botName of Object.keys(bots)) {
+                const bot = bots[botName];
+                const div = document.createElement('div');
+                div.className = 'bot-box';
+                div.innerHTML = `
+                    <div class="bot-info">
+                        <strong>${bot.name}</strong>
+                        <p>Server: ${bot.server}</p>
+                        <p>Version: ${bot.version}</p>
+                    </div>
+                    <span class="status-dot ${bot.active ? 'active' : 'inactive'}"></span>
+                    <button onclick="showBotDetails('${bot.name}', '${bot.server}', '${bot.version}', ${bot.viewerPort})">View</button>
+                `;
+                botList.appendChild(div);
+            }
+        }
+
+        function showBotDetails(name, server, version, viewerPort) {
+            document.getElementById('bot-name').textContent = name;
+            document.getElementById('bot-server').textContent = server;
+            document.getElementById('bot-version').textContent = version;
+            // Display the viewer link
+            const botViewer = document.getElementById('bot-viewer');
+            botViewer.src = `http://localhost:${viewerPort}`;
+
+            const chatContainer = document.getElementById('chat');
+            chatContainer.innerHTML = '';
+
+            document.getElementById('bot-details').style.display = 'block';
+        }
+
+        function closeBotDetails() {
+            document.getElementById('bot-details').style.display = 'none';
+        }
+
+        setInterval(fetchBots, 5000);
+        fetchBots();
+    </script>
+</body>
+</html>
